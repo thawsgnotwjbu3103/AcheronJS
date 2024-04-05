@@ -1,0 +1,22 @@
+{
+  "name": "acheronjs",
+  "version": "1.0.0",
+  "description": "A minimal web framework",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch index.ts"
+  },
+  "author": "ThawsgNotWjbu3103",
+  "license": "MIT",
+  "devDependencies": {
+    "@tsconfig/recommended": "^1.0.5",
+    "@types/node": "^20.12.4",
+    "@types/qs": "^6.9.14",
+    "tsx": "^4.7.2",
+    "typescript": "^5.4.4"
+  },
+  "dependencies": {
+    "handlebars": "^4.7.8",
+    "qs": "^6.12.0"
+  }
+}
