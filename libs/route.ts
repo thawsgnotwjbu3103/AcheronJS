@@ -1,7 +1,8 @@
-import { Handler, IRoute } from "./type"
+import { Handler, RouteType } from "./type"
+import { REGEX_PARAMS_ROUTE } from "./constant"
 
 export default class Route {
-  routes: IRoute = {
+  routes: RouteType = {
     get: [],
     delete: [],
     patch: [],
@@ -11,23 +12,43 @@ export default class Route {
   }
 
   get = (path: string, ...handlers: Handler[]) => {
-    this.routes.get.push({ path, handlers, regexPath: new RegExp(`^${path.replace(/:\w+/g, "([^\\/]+)")}$`) })
+    this.routes.get.push({
+      path,
+      handlers,
+      regexPath: new RegExp(`^${path.replace(REGEX_PARAMS_ROUTE, "([^\\/]+)")}$`)
+    })
   }
 
   delete = (path: string, ...handlers: Handler[]) => {
-    this.routes.delete.push({ path, handlers, regexPath: new RegExp(`^${path.replace(/:\w+/g, "([^\\/]+)")}$`) })
+    this.routes.delete.push({
+      path,
+      handlers,
+      regexPath: new RegExp(`^${path.replace(REGEX_PARAMS_ROUTE, "([^\\/]+)")}$`)
+    })
   }
 
   patch = (path: string, ...handlers: Handler[]) => {
-    this.routes.patch.push({ path, handlers, regexPath: new RegExp(`^${path.replace(/:\w+/g, "([^\\/]+)")}$`) })
+    this.routes.patch.push({
+      path,
+      handlers,
+      regexPath: new RegExp(`^${path.replace(REGEX_PARAMS_ROUTE, "([^\\/]+)")}$`)
+    })
   }
 
   post = (path: string, ...handlers: Handler[]) => {
-    this.routes.post.push({ path, handlers, regexPath: new RegExp(`^${path.replace(/:\w+/g, "([^\\/]+)")}$`) })
+    this.routes.post.push({
+      path,
+      handlers,
+      regexPath: new RegExp(`^${path.replace(REGEX_PARAMS_ROUTE, "([^\\/]+)")}$`)
+    })
   }
 
   put = (path: string, ...handlers: Handler[]) => {
-    this.routes.put.push({ path, handlers, regexPath: new RegExp(`^${path.replace(/:\w+/g, "([^\\/]+)")}$`) })
+    this.routes.put.push({
+      path,
+      handlers,
+      regexPath: new RegExp(`^${path.replace(REGEX_PARAMS_ROUTE, "([^\\/]+)")}$`)
+    })
   }
 
   use = (middleware: Handler) => {

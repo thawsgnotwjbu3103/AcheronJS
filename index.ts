@@ -1,9 +1,13 @@
 import AcheronJS from "./libs/acheron"
-
 const app = new AcheronJS()
 
-app.get("/", (req, res) => {
-  res.json({ text: "Hello World" })
+app.get("/:id/test/:review", (req, res) => {
+  res.json({ id: req.params.id })
+})
+
+app.post("/", (req, res) => {
+  console.log(req.body)
+  res.json({ id: "Hello" })
 })
 
 app.listen(3000, () => {
