@@ -6,8 +6,7 @@ app.get("/:id/test/:review", (req, res) => {
 })
 
 app.post("/", (req, res) => {
-  console.log(req.body)
-  res.json({ id: "Hello" })
+  res.json({body: req.body, files: req.files})
 })
 
 app.listen(3000, () => {

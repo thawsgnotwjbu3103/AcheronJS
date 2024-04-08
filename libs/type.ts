@@ -10,6 +10,13 @@ export interface Request extends http.IncomingMessage {
   body: {
     [key: string]: any
   };
+  files: {
+    [key: string]: any
+  };
+  cookies: {
+    [key: string]: any
+  }
+  clientIp: string | null;
 
   [key: string]: any
 }
@@ -32,5 +39,5 @@ export interface Method {
 }
 
 export type RouteType = {
-  [key in "get" | "post" | "delete" | "put" | "patch"]: Method[];
-} & { use: Handler[] }
+  [key in "get" | "post" | "delete" | "put" | "patch" | "use"]: Method[];
+}

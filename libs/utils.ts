@@ -1,5 +1,6 @@
 import { Request } from "./type"
 import * as qs from "querystring"
+import formidable from "formidable"
 
 export const getParams = (req: Request, pathRegex: RegExp, path: string) => {
   if (!req.url) return {}
@@ -23,15 +24,43 @@ export const getQuery = (req: Request) => {
   return qs.parse(url)
 }
 
-export const getBody = (req: Request) => {
-  let body = '';
-  req.on('data', chunk => {
-    body += chunk.toString();
-  });
+export const getBody = async (req: Request, options?: formidable.Options) => {
+  const form = formidable(options)
+  try {
+    const [fields, files] = await form.parse(req)
+    const body: any = {}
+    const file: any = {}
+    for (let [key, value] of Object.entries(fields)) {
+      if (value) {
+        if (value.length > 1) {
+          body[key] = value
+        } else if (value.length == 1) {
+          body[key] = value[0]
+        } else {
+          body[key] = undefined
+        }
+      } else {
+        body[key] = undefined
+      }
+    }
 
-  req.on('end', () => {
-    const formData = qs.parse(body);
-    console.log(formData);
-  });
-  return {}
+    for (let [key, value] of Object.entries(files)) {
+      if (value) {
+        if (value.length > 1) {
+          file[key] = value
+        } else if (value.length === 1) {
+          file[key] = value[0]
+        } else {
+          file[key] = undefined
+        }
+      } else {
+        file[key] = undefined
+      }
+    }
+
+    req.files = file
+    req.body = body
+  } catch (err) {
+    console.error(err)
+  }
 }
