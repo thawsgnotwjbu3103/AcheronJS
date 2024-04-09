@@ -1,4 +1,5 @@
 import * as http from "http"
+import { CONTENT_TYPE } from "./constant"
 
 export interface Request extends http.IncomingMessage {
   params: {
@@ -22,9 +23,10 @@ export interface Request extends http.IncomingMessage {
 }
 
 export interface Response extends http.ServerResponse {
-  json: (object: any) => void;
-  send: (body: any) => void;
-  render: (filePath: string, object: any) => void;
+  json: (object: any, config?: ResponseConfig) => void;
+  send: (body: any, config?: ResponseConfig) => void;
+  render: (filePath: string, object: any, config?: ResponseConfig) => void;
+  internalError: (body: any) => void
   notFound: () => void;
 
   [key: string]: any
@@ -39,5 +41,13 @@ export interface Method {
 }
 
 export type RouteType = {
-  [key in "get" | "post" | "delete" | "put" | "patch" | "use"]: Method[];
+  [key in "get" | "post" | "delete" | "put" | "patch"]: Method[];
+} & { use: Handler[] }
+
+export type ContentTypeKey = keyof typeof CONTENT_TYPE
+
+export type ResponseConfig = {
+  statusCode?: number;
+  contentType?: string;
+  encoding?: BufferEncoding
 }

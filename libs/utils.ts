@@ -2,65 +2,69 @@ import { Request } from "./type"
 import * as qs from "querystring"
 import formidable from "formidable"
 
-export const getParams = (req: Request, pathRegex: RegExp, path: string) => {
-  if (!req.url) return {}
-  const matchName = pathRegex.exec(path)
-  const matchValue = pathRegex.exec(req.url)
-  if (!matchName || !matchValue) return {}
-  const obj: any = {}
-  matchName.splice(0, 1)
-  matchValue.splice(0, 1)
-  for (let i = 0; i < matchValue.length; i++) {
-    const propertyName = matchName[i].replace(":", "")
-    obj[propertyName] = matchValue[i]
+export default class Utils {
+
+  getParams = (req: Request, pathRegex: RegExp, path: string) => {
+    if (!req.url) return {}
+    const matchName = pathRegex.exec(path)
+    const matchValue = pathRegex.exec(req.url)
+    if (!matchName || !matchValue) return {}
+    const obj: any = {}
+    matchName.splice(0, 1)
+    matchValue.splice(0, 1)
+    for (let i = 0; i < matchValue.length; i++) {
+      const propertyName = matchName[i].replace(":", "")
+      obj[propertyName] = matchValue[i]
+    }
+    return obj
   }
-  return obj
-}
 
-export const getQuery = (req: Request) => {
-  if (!req.url) return {}
-  const url = req.url.split("?")[1]
-  if (!url) return {}
-  return qs.parse(url)
-}
+  getQuery = (req: Request) => {
+    if (!req.url) return {}
+    const url = req.url.split("?")[1]
+    if (!url) return {}
+    return qs.parse(url)
+  }
 
-export const getBody = async (req: Request, options?: formidable.Options) => {
-  const form = formidable(options)
-  try {
-    const [fields, files] = await form.parse(req)
-    const body: any = {}
-    const file: any = {}
-    for (let [key, value] of Object.entries(fields)) {
-      if (value) {
-        if (value.length > 1) {
-          body[key] = value
-        } else if (value.length == 1) {
-          body[key] = value[0]
+  getBody = async (req: Request, options?: formidable.Options) => {
+    const form = formidable(options)
+    try {
+      const [fields, files] = await form.parse(req)
+      const body: any = {}
+      const file: any = {}
+      for (let [key, value] of Object.entries(fields)) {
+        if (value) {
+          if (value.length > 1) {
+            body[key] = value
+          } else if (value.length == 1) {
+            body[key] = value[0]
+          } else {
+            body[key] = undefined
+          }
         } else {
           body[key] = undefined
         }
-      } else {
-        body[key] = undefined
       }
-    }
 
-    for (let [key, value] of Object.entries(files)) {
-      if (value) {
-        if (value.length > 1) {
-          file[key] = value
-        } else if (value.length === 1) {
-          file[key] = value[0]
+      for (let [key, value] of Object.entries(files)) {
+        if (value) {
+          if (value.length > 1) {
+            file[key] = value
+          } else if (value.length === 1) {
+            file[key] = value[0]
+          } else {
+            file[key] = undefined
+          }
         } else {
           file[key] = undefined
         }
-      } else {
-        file[key] = undefined
       }
-    }
 
-    req.files = file
-    req.body = body
-  } catch (err) {
-    console.error(err)
+      req.files = file
+      req.body = body
+    } catch (err) {
+      console.error(err)
+    }
   }
 }
+

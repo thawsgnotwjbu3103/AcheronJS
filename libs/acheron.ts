@@ -1,20 +1,24 @@
 import * as http from "http"
-import * as fs from "fs"
-import * as hbs from "handlebars"
 import * as requestIp from "request-ip"
-import * as path from "path"
 import formidable from "formidable"
 
-
+import { DEFAULT_MAX_FILE_SIZE, DEFAULT_PORT } from "./constant"
+import { Handler, Method, Request, Response, ResponseConfig, RouteType } from "./type"
 import Route from "./route"
-import { CONTENT_TYPE, DEFAULT_MAX_FILE_SIZE, DEFAULT_PORT } from "./constant"
-import { Handler, Method, Request, Response, RouteType } from "./type"
-import { getBody, getParams, getQuery } from "./utils"
+import Static from "./static"
+import ResultResponse from "./response"
+import Utils from "./utils"
 
 
 export default class AcheronJS {
 
   private r = new Route()
+  private s = new Static()
+  private u = new Utils()
+
+  private formidableOptions: formidable.Options | undefined = {
+    maxFileSize: DEFAULT_MAX_FILE_SIZE
+  }
 
   use = this.r.use
   get = this.r.get
@@ -24,67 +28,40 @@ export default class AcheronJS {
   put = this.r.put
   routes = this.r.routes
 
-
-  private formidableOptions: formidable.Options | undefined = {
-    maxFileSize: DEFAULT_MAX_FILE_SIZE
-  }
-
-  private notFoundReturn = (req: Request, res: Response) => {
-    res.writeHead(404, { "Content-Type": CONTENT_TYPE[".txt"] })
-    res.end(`Not Found - ${req.method} - ${req.url}`)
-  }
-
-  private jsonReturn = (object: any, res: Response) => {
-    res.writeHead(200, { "Content-Type": CONTENT_TYPE[".json"] })
-    res.end(JSON.stringify(object))
-  }
-
-  private sendReturn = (body: any, res: Response) => {
-    res.writeHead(200, { "Content-Type": CONTENT_TYPE[".txt"] })
-    res.end(body)
-  }
-
-  private renderReturn = (filePath: string, object: any, res: Response) => {
-    res.writeHead(200, { "Content-Type": CONTENT_TYPE[".html"] })
-    fs.readFile(filePath, (err, data) => {
-      if (err) throw err
-      const body = hbs.compile(data.toString())
-      res.end(body(object))
-    })
-  }
+  static = this.s.static
 
   formidable = (options?: formidable.Options) => this.formidableOptions = options
 
   initialize = async (req: Request, res: Response) => {
+    const rr = new ResultResponse(req, res)
 
     req.clientIp = requestIp.getClientIp(req)
 
-    res.json = (object: any) => this.jsonReturn(object, res)
-
-    res.notFound = () => this.notFoundReturn(req, res)
-
-    res.send = (body: any) => this.sendReturn(body, res)
-
-    res.render = (filePath: string, object: any) => this.renderReturn(filePath, object, res)
+    res.notFound = () => rr.notFoundReturn()
+    res.internalError = (body: any) => rr.internalErrorReturn(body)
+    res.json = (object: any, config: ResponseConfig | undefined = {}) => rr.jsonReturn(object, config)
+    res.send = (body: any, config: ResponseConfig | undefined = {}) => rr.sendReturn(body, config)
+    res.render = (filePath: string, object: any, config: ResponseConfig | undefined = {}) => rr.renderReturn(filePath, object, config)
 
     let index = 0
     const next = async () => {
-      const url = req.url
-      if (!url) return this.notFoundReturn(req, res)
-
-      if (index < this.use.length) this.routes.use[index++]
-
-      const method = (req.method && req.method.toLowerCase() || "get") as keyof RouteType
-      const exactRoute = this.routes[method].find(route => "path" in route && "handlers" in route && route.regexPath.test(url)) as Method
-      if (!exactRoute) return this.notFoundReturn(req, res)
-
-      const handlers = exactRoute.handlers as Handler[]
-      await Promise.all(handlers.map(async handler => {
-        req.params = getParams(req, exactRoute.regexPath, exactRoute.path)
-        req.query = getQuery(req)
-        await getBody(req, this.formidableOptions)
-        await handler(req, res, next)
-      }))
+      if (index < this.use.length) {
+        const middleware = this.routes.use[index++]
+        middleware(req, res, next)
+      } else {
+        const url = req.url
+        if (!url) return rr.notFoundReturn()
+        const method = (req.method && req.method.toLowerCase() || "get") as keyof RouteType
+        const exactRoute = this.routes[method].find(route => "path" in route && "handlers" in route && route.regexPath.test(url)) as Method
+        if (!exactRoute) return rr.notFoundReturn()
+        const handlers = exactRoute.handlers as Handler[]
+        await Promise.all(handlers.map(async handler => {
+          req.params = this.u.getParams(req, exactRoute.regexPath, exactRoute.path)
+          req.query = this.u.getQuery(req)
+          await this.u.getBody(req, this.formidableOptions)
+          await handler(req, res, next)
+        }))
+      }
     }
     await next()
   }

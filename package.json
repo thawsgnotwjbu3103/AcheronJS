@@ -2,7 +2,7 @@
   "name": "acheronjs",
   "version": "1.0.0",
   "description": "A minimal web framework",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch index.ts"
   },
