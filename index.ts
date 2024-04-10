@@ -1,2 +1,2 @@
-import * as AcheronJS from "./libs/acheron"
+import AcheronJS from "./libs/acheron"
 export default AcheronJS

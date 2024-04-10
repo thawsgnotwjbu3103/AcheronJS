@@ -2,8 +2,14 @@ import { Request, Response, ResponseConfig } from "./type"
 import { CONTENT_TYPE } from "./constant"
 import * as fs from "fs"
 import * as hbs from "handlebars"
+import { CookieParseOptions, CookieSerializeOptions } from "cookie"
+import * as cookie from "cookie"
 
-export default class ResultResponse {
+export default class ServerResponse {
+  private _res: Response
+  private _req: Request
+
+
   get res(): Response {
     return this._res
   }
@@ -12,7 +18,6 @@ export default class ResultResponse {
     this._res = value
   }
 
-  private _res: Response
 
   get req(): Request {
     return this._req
@@ -22,7 +27,6 @@ export default class ResultResponse {
     this._req = value
   }
 
-  private _req: Request
 
   constructor(req: Request, res: Response) {
     this._req = req
@@ -61,6 +65,10 @@ export default class ResultResponse {
   internalErrorReturn = (body: any) => {
     this._res.writeHead(500, { "Content-Type": CONTENT_TYPE[".txt"] })
     this._res.end(body, "utf-8")
+  }
+
+  cookie = (name: string, value: string, options?: CookieSerializeOptions) => {
+    cookie.serialize(name, value, options)
   }
 
 }

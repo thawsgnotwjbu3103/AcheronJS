@@ -28,6 +28,10 @@ export default class Utils {
 
   getBody = async (req: Request, options?: formidable.Options) => {
     const form = formidable(options)
+    const result = {
+      file: {},
+      body: {}
+    }
     try {
       const [fields, files] = await form.parse(req)
       const body: any = {}
@@ -60,11 +64,13 @@ export default class Utils {
         }
       }
 
-      req.files = file
-      req.body = body
+      result.body = body
+      result.file = file
     } catch (err) {
       console.error(err)
     }
+
+    return result
   }
 }
 

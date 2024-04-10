@@ -4,12 +4,13 @@
   "description": "A minimal web framework",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "tsx watch index.ts"
+    "dev": "tsx watch test.ts"
   },
   "author": "ThawsgNotWjbu3103",
   "license": "MIT",
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.5",
+    "@types/cookie": "^0.6.0",
     "@types/formidable": "^3.4.5",
     "@types/node": "^20.12.4",
     "@types/qs": "^6.9.14",
@@ -18,6 +19,7 @@
     "typescript": "^5.4.4"
   },
   "dependencies": {
+    "cookie": "^0.6.0",
     "formidable": "^3.5.1",
     "handlebars": "^4.7.8",
     "qs": "^6.12.0",
