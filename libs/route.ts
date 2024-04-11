@@ -1,5 +1,6 @@
-import { Handler, RouteType } from "./type"
+import { Handler, MethodHandler, RouterHandler, RouteType } from "./type"
 import { REGEX_PARAMS_ROUTE } from "./constant"
+import * as util from "util"
 
 export default class Route {
   routes: RouteType = {
@@ -53,5 +54,15 @@ export default class Route {
 
   use = (middleware: Handler) => {
     this.routes.use.push(middleware)
+  }
+
+  register = (routerFunction: (r: RouterHandler) => void) => {
+    routerFunction({
+      get: this.get,
+      post: this.post,
+      patch: this.patch,
+      delete: this.delete,
+      put: this.put
+    })
   }
 }

@@ -18,6 +18,14 @@
     "tsx": "^4.7.2",
     "typescript": "^5.4.4"
   },
+  "exports": {
+    ".": {
+      "default": "./dist/index.js"
+    },
+    "./types": {
+      "default": "./dist/libs/type.js"
+    }
+  },
   "dependencies": {
     "cookie": "^0.6.0",
     "formidable": "^3.5.1",

@@ -42,6 +42,12 @@ export interface Method {
   handlers: Handler[]
 }
 
+export type MethodHandler = (path: string, ...handlers: Handler[]) => void
+
+export type RouterHandler  = {
+  [key in "get" | "post" | "delete" | "put" | "patch"]: MethodHandler
+}
+
 export type RouteType = {
   [key in "get" | "post" | "delete" | "put" | "patch"]: Method[];
 } & { use: Handler[] }

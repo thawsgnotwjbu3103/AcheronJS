@@ -25,7 +25,9 @@ export default class AcheronJS {
   patch = this.r.patch // PATCH method
   post = this.r.post // POST method
   put = this.r.put // PUT method
+  register = this.r.register // register router
   routes = this.r.routes // routes array
+
 
   static = this.s.static // serve static files function
 
