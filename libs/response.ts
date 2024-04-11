@@ -71,4 +71,13 @@ export default class ServerResponse {
     cookie.serialize(name, value, options)
   }
 
+  initializeResponse = () => {
+    this._res.cookie = this.cookie
+    this._res.send = this.sendReturn
+    this._res.json = this.jsonReturn
+    this._res.internalError = this.internalErrorReturn
+    this._res.render = this.renderReturn
+    this._res.notFound = this.notFoundReturn
+  }
+
 }

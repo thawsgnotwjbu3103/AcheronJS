@@ -2,9 +2,10 @@
   "name": "acheronjs",
   "version": "1.0.0",
   "description": "A minimal web framework",
-  "main": "dist/index.js",
+  "main": "dist/acheron.js",
   "scripts": {
-    "dev": "tsx watch test.ts"
+    "dev": "tsx watch test.ts",
+    "build": "microbundle libs/*.ts"
   },
   "author": "ThawsgNotWjbu3103",
   "license": "MIT",
@@ -15,16 +16,13 @@
     "@types/node": "^20.12.4",
     "@types/qs": "^6.9.14",
     "@types/request-ip": "^0.0.41",
+    "microbundle": "^0.15.1",
     "tsx": "^4.7.2",
     "typescript": "^5.4.4"
   },
   "exports": {
-    ".": {
-      "default": "./dist/index.js"
-    },
-    "./types": {
-      "default": "./dist/libs/type.js"
-    }
+    "require": "./dist/acheron.cjs",
+    "default": "./dist/acheron.modern.js"
   },
   "dependencies": {
     "cookie": "^0.6.0",
@@ -32,5 +30,13 @@
     "handlebars": "^4.7.8",
     "qs": "^6.12.0",
     "request-ip": "^3.3.0"
-  }
+  },
+  "module": "./dist/acheron.module.js",
+  "unpkg": "./dist/acheron.umd.js",
+  "files": [
+    "LICENSE",
+    "README.md",
+    "dist/",
+    "libs"
+  ]
 }

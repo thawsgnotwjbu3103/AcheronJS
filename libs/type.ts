@@ -3,23 +3,12 @@ import { CONTENT_TYPE } from "./constant"
 import { CookieSerializeOptions } from "cookie"
 
 export interface Request extends http.IncomingMessage {
-  params: {
-    [key: string]: any
-  };
-  query: {
-    [key: string]: any
-  };
-  body: {
-    [key: string]: any
-  };
-  files: {
-    [key: string]: any
-  };
-  cookies: {
-    [key: string]: any
-  }
+  params: { [key: string]: any };
+  query: { [key: string]: any };
+  body: { [key: string]: any };
+  files: { [key: string]: any };
+  cookies: { [key: string]: any }
   clientIp: string | null;
-
   [key: string]: any
 }
 
@@ -30,7 +19,6 @@ export interface Response extends http.ServerResponse {
   internalError: (body: any) => void
   notFound: () => void;
   cookie: (name: string, value: string, options?: CookieSerializeOptions) => void
-
   [key: string]: any
 }
 

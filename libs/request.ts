@@ -8,6 +8,15 @@ export default class ClientRequest {
   private _res: Response
   private _req: Request
   private utils = new Utils()
+  private _option: formidable.Options | undefined
+
+  get option(): formidable.Options | undefined {
+    return this._option
+  }
+
+  set option(value: formidable.Options | undefined) {
+    this._option = value
+  }
 
   get res(): Response {
     return this._res
@@ -27,9 +36,11 @@ export default class ClientRequest {
   }
 
 
-  constructor(req: Request, res: Response) {
+  constructor(req: Request, res: Response, formidableOption: formidable.Options | undefined) {
     this._req = req
     this._res = res
+    this._option = formidableOption
+
   }
 
   getClientIp = () => {
@@ -52,6 +63,13 @@ export default class ClientRequest {
     const cookieStr = this._req.headers["cookie"]
     if (!cookieStr) return {}
     return cookie.parse(cookieStr)
+  }
+
+  initializeRequest = () => {
+    this._req.clientIp = this.getClientIp()
+    this._req.body = this.bodyParser(this._option)
+    this._req.cookies = this.cookies()
+    this._req.query = this.query()
   }
 
 

@@ -1,13 +1,15 @@
 {
     "extends": "@tsconfig/recommended/tsconfig.json",
     "compilerOptions": {
-        "outDir": "dist"
+        "outDir": "./dist",
+        "module": "commonjs"
     },
     "include": [
         "**/*"
     ],
     "exclude": [
         "node_modules",
-        "**/*.spec.ts"
+        "**/*.spec.ts",
+        "./dist/**/*"
     ]
 }

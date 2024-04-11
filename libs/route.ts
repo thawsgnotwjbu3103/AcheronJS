@@ -1,6 +1,5 @@
 import { Handler, MethodHandler, RouterHandler, RouteType } from "./type"
 import { REGEX_PARAMS_ROUTE } from "./constant"
-import * as util from "util"
 
 export default class Route {
   routes: RouteType = {
