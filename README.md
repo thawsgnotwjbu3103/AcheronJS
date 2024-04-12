@@ -1,4 +1,8 @@
-- AcheronJS - an [ExpressJS](https://expressjs.com/) clone for learning purpose
+## AcheronJS - an [ExpressJS](https://expressjs.com/) clone for learning purpose
+
+
+[![npm version](https://badge.fury.io/js/acheronjs.svg)](https://badge.fury.io/js/acheronjs)
+[![install size](https://packagephobia.com/badge?p=acheronjs)](https://packagephobia.com/result?p=acheronjs)
 
 ## Installation
 ```
