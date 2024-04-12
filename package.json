@@ -36,7 +36,6 @@
   "files": [
     "LICENSE",
     "README.md",
-    "dist/",
-    "libs"
+    "dist/"
   ]
 }

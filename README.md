@@ -1,4 +1,10 @@
 - AcheronJS - an [ExpressJS](https://expressjs.com/) clone for learning purpose
+
+## Installation
+```
+npm i acheronjs
+```
+
 ```js
 const Acheron = require("acheronjs")
 const app = new Acheron()
