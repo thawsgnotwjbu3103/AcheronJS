@@ -43,5 +43,11 @@
     "LICENSE",
     "README.md",
     "dist/"
+  ],
+  "keywords": [
+    "acheron",
+    "acheronjs",
+    "expressclone",
+    "http"
   ]
 }
