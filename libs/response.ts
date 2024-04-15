@@ -1,9 +1,11 @@
-import { Request, Response, ResponseConfig } from "./type"
+import { Request, Response, ResponseConfig, Headers, ContentTypeKey } from "./type"
 import { CONTENT_TYPE } from "./constant"
 import * as fs from "fs"
 import * as hbs from "handlebars"
-import { CookieParseOptions, CookieSerializeOptions } from "cookie"
+import { CookieSerializeOptions } from "cookie"
 import * as cookie from "cookie"
+import * as path from "path"
+import contentDisposition from "content-disposition"
 
 export default class ServerResponse {
   private _res: Response
@@ -71,6 +73,35 @@ export default class ServerResponse {
     cookie.serialize(name, value, options)
   }
 
+  set = (headers: Headers) => {
+    for (const [key, value] of Object.entries(headers)) {
+      this._res.setHeader(key, value || "")
+    }
+  }
+
+  append = (name: string, value: string) => {
+    this._res.setHeader(name.toLowerCase(), value)
+  }
+
+  get = (name: string) => {
+    return this._res.getHeader(name.toLowerCase())
+  }
+
+  attachment = (filename: string | undefined) => {
+    if (!filename) return
+    const key = path.extname(filename) as ContentTypeKey
+    this._res.append("Content-Type", CONTENT_TYPE[key])
+    this._res.append("Content-Disposition", contentDisposition(filename))
+    return
+  }
+
+  download = (path: string, fileName: string | undefined ,options: any, callback: any) => {
+    let done = false
+    let streaming;
+
+  }
+
+
   initializeResponse = () => {
     this._res.cookie = this.cookie
     this._res.send = this.sendReturn
@@ -78,6 +109,10 @@ export default class ServerResponse {
     this._res.internalError = this.internalErrorReturn
     this._res.render = this.renderReturn
     this._res.notFound = this.notFoundReturn
+    this._res.set = this.set
+    this._res.append = this.append
+    this._res.get = this.get
+    this._res.attachment = this.attachment
   }
 
 }

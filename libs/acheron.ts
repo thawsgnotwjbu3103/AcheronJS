@@ -2,7 +2,7 @@ import * as http from "http"
 import formidable from "formidable"
 
 import { DEFAULT_MAX_FILE_SIZE, DEFAULT_PORT } from "./constant"
-import { Handler, Method, Request, Response, ResponseConfig, RouteType } from "./type"
+import { Handler, Method, Request, Response, RouteType } from "./type"
 import Route from "./route"
 import Static from "./static"
 import ServerResponse from "./response"

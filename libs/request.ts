@@ -65,6 +65,8 @@ export default class ClientRequest {
     return cookie.parse(cookieStr)
   }
 
+
+
   initializeRequest = () => {
     this._req.clientIp = this.getClientIp()
     this._req.body = this.bodyParser(this._option)

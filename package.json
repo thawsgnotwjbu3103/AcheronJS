@@ -11,12 +11,12 @@
   "license": "MIT",
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.5",
+    "@types/content-disposition": "^0.5.8",
     "@types/cookie": "^0.6.0",
     "@types/formidable": "^3.4.5",
     "@types/node": "^20.12.4",
     "@types/qs": "^6.9.14",
     "@types/request-ip": "^0.0.41",
-    "microbundle": "^0.15.1",
     "tsx": "^4.7.2",
     "typescript": "^5.4.4"
   },
@@ -31,6 +31,7 @@
     }
   },
   "dependencies": {
+    "content-disposition": "^0.5.4",
     "cookie": "^0.6.0",
     "formidable": "^3.5.1",
     "handlebars": "^4.7.8",

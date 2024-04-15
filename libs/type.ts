@@ -1,4 +1,5 @@
 import * as http from "http"
+import { IncomingHttpHeaders } from "http"
 import { CONTENT_TYPE } from "./constant"
 import { CookieSerializeOptions } from "cookie"
 
@@ -9,6 +10,7 @@ export interface Request extends http.IncomingMessage {
   files: { [key: string]: any };
   cookies: { [key: string]: any }
   clientIp: string | null;
+
   [key: string]: any
 }
 
@@ -18,7 +20,11 @@ export interface Response extends http.ServerResponse {
   render: (filePath: string, object: any, config?: ResponseConfig) => void;
   internalError: (body: any) => void
   notFound: () => void;
-  cookie: (name: string, value: string, options?: CookieSerializeOptions) => void
+  cookie: (name: string, value: string, options?: CookieSerializeOptions) => void,
+  set: (headers: Headers) => void,
+  append: (name: string, value: string) => void;
+  get: (name: string) => number | string | string[] | undefined;
+  attachment: (filename: string | undefined) => void;
   [key: string]: any
 }
 
@@ -32,8 +38,12 @@ export interface Method {
 
 export type MethodHandler = (path: string, ...handlers: Handler[]) => void
 
-export type RouterHandler  = {
+export type RouterHandler = {
   [key in "get" | "post" | "delete" | "put" | "patch"]: MethodHandler
+}
+
+export type Headers = {
+  [key in keyof IncomingHttpHeaders]: string | undefined
 }
 
 export type RouteType = {
