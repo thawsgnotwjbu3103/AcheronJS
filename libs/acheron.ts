@@ -1,7 +1,7 @@
 import * as http from "http"
 import formidable from "formidable"
 
-import { DEFAULT_MAX_FILE_SIZE, DEFAULT_PORT } from "./constant"
+import { DEFAULT_MAX_FILE_SIZE } from "./constant"
 import { Handler, Method, Request, Response, RouteType } from "./type"
 import Route from "./route"
 import Static from "./static"
@@ -60,7 +60,7 @@ export default class AcheronJS {
     await next()
   }
 
-  listen = (port: number = DEFAULT_PORT, listeningListener?: () => void) => {
+  listen = (port: number, listeningListener?: () => void) => {
     const server = http.createServer(async (request, response) => {
       const req = request as Request
       const res = response as Response

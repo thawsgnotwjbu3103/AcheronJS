@@ -4,7 +4,6 @@
   "description": "A minimal web framework",
   "main": "dist/acheron.js",
   "scripts": {
-    "dev": "tsx watch test.ts",
     "build": "microbundle libs/*.ts"
   },
   "author": "ThawsgNotWjbu3103",
@@ -15,8 +14,10 @@
     "@types/cookie": "^0.6.0",
     "@types/formidable": "^3.4.5",
     "@types/node": "^20.12.4",
+    "@types/on-finished": "^2.3.4",
     "@types/qs": "^6.9.14",
     "@types/request-ip": "^0.0.41",
+    "@types/send": "^0.17.4",
     "tsx": "^4.7.2",
     "typescript": "^5.4.4"
   },
@@ -35,8 +36,10 @@
     "cookie": "^0.6.0",
     "formidable": "^3.5.1",
     "handlebars": "^4.7.8",
+    "on-finished": "^2.4.1",
     "qs": "^6.12.0",
-    "request-ip": "^3.3.0"
+    "request-ip": "^3.3.0",
+    "send": "^0.18.0"
   },
   "module": "./dist/acheron.module.js",
   "unpkg": "./dist/acheron.umd.js",

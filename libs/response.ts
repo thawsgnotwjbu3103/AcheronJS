@@ -1,16 +1,19 @@
-import { Request, Response, ResponseConfig, Headers, ContentTypeKey } from "./type"
+import { Request, Response, ResponseConfig, Headers, ContentTypeKey, Callback, Options } from "./type"
 import { CONTENT_TYPE } from "./constant"
 import * as fs from "fs"
 import * as hbs from "handlebars"
 import { CookieSerializeOptions } from "cookie"
 import * as cookie from "cookie"
 import * as path from "path"
+import onFinished from "on-finished"
 import contentDisposition from "content-disposition"
+import send, { SendStream } from "send"
+import Utils from "./utils"
 
 export default class ServerResponse {
   private _res: Response
   private _req: Request
-
+  private utils = new Utils()
 
   get res(): Response {
     return this._res
@@ -88,19 +91,128 @@ export default class ServerResponse {
   }
 
   attachment = (filename: string | undefined) => {
-    if (!filename) return
-    const key = path.extname(filename) as ContentTypeKey
-    this._res.append("Content-Type", CONTENT_TYPE[key])
+    if (filename) {
+      const key = path.extname(filename) as ContentTypeKey
+      this._res.append("Content-Type", CONTENT_TYPE[key])
+    }
     this._res.append("Content-Disposition", contentDisposition(filename))
     return
   }
 
-  download = (path: string, fileName: string | undefined ,options: any, callback: any) => {
-    let done = false
-    let streaming;
-
+  clearCookie = (name: string, options: CookieSerializeOptions) => {
+    cookie.serialize(name, "", { ...options, expires: options.expires || new Date(1), path: options.path || "/" })
   }
 
+  sendFile = (path: string | undefined, options: Options | null, callback: Callback | undefined) => {
+    let done = callback
+    let opts = options || {}
+
+    if (!path) {
+      throw new TypeError("path argument is required to res.sendFile")
+    }
+
+    if (opts && !("root" in opts) && !this.utils.isAbsolute(path)) {
+      throw new TypeError("path must be absolute or specify root to res.sendFile")
+    }
+
+    let pathname = encodeURI(path)
+    const file = send(this._req, pathname, opts)
+
+    this.fileTransfer(file, opts, (err) => {
+      if (done) return done(err, null)
+      if (err && err.code === "EISDIR") return
+      if (err && err.code === "ECONNABORTED" && err.syscall !== "write") throw new TypeError(err.message)
+    })
+  }
+
+  fileTransfer = (file: SendStream, opts: Options | {}, callback: Callback) => {
+    let done = false
+    let streaming = true
+
+    const onAborted = () => {
+      if (done) return
+      done = true
+      let err = { message: "Request aborted", name: "Request aborted", code: "ECONNABORTED" }
+      callback(err, null)
+    }
+
+    const onDirectory = () => {
+      if (done) return
+      let err = { message: "EISDIR, read", name: "EISDIR, read", code: "EISDIR" }
+      callback(err, null)
+    }
+
+    const onError = (err: NodeJS.ErrnoException) => {
+      if (done) return
+      done = true
+      callback(err, null)
+    }
+
+    const onEnd = () => {
+      if (done) return
+      done = true
+      callback(null, null)
+    }
+
+    const onFile = () => {
+      streaming = false
+    }
+
+    const onFinish = (err: NodeJS.ErrnoException | null) => {
+      if (err && err.code === "ECONNRESET") return onAborted()
+      if (err) return onError(err)
+      if (done) return
+
+      setImmediate(() => {
+        if (streaming && !done) return onAborted()
+        if (done) return
+        done = true
+        callback(null, null)
+      })
+
+    }
+
+    const onStream = () => {
+      streaming = true
+    }
+
+    file.on("directory", onDirectory)
+    file.on("end", onEnd)
+    file.on("error", onError)
+    file.on("file", onFile)
+    file.on("stream", onStream)
+    onFinished(this._res, onFinish)
+
+    if (opts && "headers" in opts) {
+      file.on("headers", (res) => {
+        const obj = opts.headers
+        for (const [key, value] of Object.entries(obj)) {
+          console.log(key, value)
+          if (value) this._res.setHeader(key, value)
+        }
+      })
+    }
+
+    file.pipe(this._res)
+  }
+
+  download = (pathDir: string, filename: string | null, options: Options | null, callback: Callback) => {
+    let headers: Headers = {
+      "Content-Disposition": contentDisposition(filename || pathDir)
+    }
+
+    if (options && options.headers) {
+      for (const [key, value] of Object.entries(options.headers)) {
+        if (value) headers[key] = value
+      }
+    }
+
+    let opts = Object.create(options)
+    opts.headers = headers
+
+    let fullPath = !opts.root ? path.resolve(pathDir) : pathDir
+    return this.sendFile(fullPath, opts, callback)
+  }
 
   initializeResponse = () => {
     this._res.cookie = this.cookie
@@ -113,6 +225,10 @@ export default class ServerResponse {
     this._res.append = this.append
     this._res.get = this.get
     this._res.attachment = this.attachment
+    this._res.sendFile = this.sendFile
+    this._res.download = this.download
+    this._res.fileTransfer = this.fileTransfer
+    this._res.clearCookie = this.clearCookie
   }
 
 }

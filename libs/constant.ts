@@ -1,4 +1,3 @@
-export const DEFAULT_PORT = 3000
 export const REGEX_PARAMS_ROUTE = /:\w+/g
 export const DEFAULT_MAX_FILE_SIZE = 128 * 1024 * 1024 // 128MB
 export const CONTENT_TYPE = {

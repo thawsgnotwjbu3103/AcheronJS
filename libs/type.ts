@@ -2,6 +2,7 @@ import * as http from "http"
 import { IncomingHttpHeaders } from "http"
 import { CONTENT_TYPE } from "./constant"
 import { CookieSerializeOptions } from "cookie"
+import { SendOptions, SendStream } from "send"
 
 export interface Request extends http.IncomingMessage {
   params: { [key: string]: any };
@@ -25,6 +26,11 @@ export interface Response extends http.ServerResponse {
   append: (name: string, value: string) => void;
   get: (name: string) => number | string | string[] | undefined;
   attachment: (filename: string | undefined) => void;
+  download: (pathDir: string, filename: string | null, options: Options | null, callback: Callback) => void;
+  sendFile: (path: string | undefined, options: Options | null, callback: Callback) => void;
+  fileTransfer: (file: SendStream, opts: Options | {}, callback: Callback) => void;
+  clearCookie: (name: string, options: CookieSerializeOptions) => void;
+
   [key: string]: any
 }
 
@@ -57,3 +63,9 @@ export type ResponseConfig = {
   contentType?: string;
   encoding?: BufferEncoding
 }
+
+export type Callback = (error: NodeJS.ErrnoException | null, data: string | Buffer | null) => void;
+
+export type Options = {
+  headers: Headers
+} & SendOptions
