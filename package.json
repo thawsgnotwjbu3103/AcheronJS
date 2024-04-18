@@ -1,8 +1,12 @@
 {
   "name": "acheronjs",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A minimal web framework",
   "main": "dist/acheron.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thawsgnotwjbu3103/AcheronJS"
+  },
   "scripts": {
     "build": "microbundle libs/*.ts"
   },
