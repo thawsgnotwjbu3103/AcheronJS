@@ -1,6 +1,6 @@
 {
   "name": "acheronjs",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "description": "A minimal web framework",
   "main": "dist/acheron.js",
   "repository": {
